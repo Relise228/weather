@@ -68,7 +68,7 @@ const App = withRouter((props) => {
           <Col className='d-flex flex-column align-items-center' style={{ padding: 0 }}>
             <Container className='d-flex align-items-center justify-content-center' style={{ padding: 0 }} fluid>
               <Image width='300px' src={`http://openweathermap.org/img/wn/${data?.weather[0]?.icon}@4x.png`} rounded />
-              <h2 style={{ fontWeight: 300, fontSize: 3 + 'rem' }}>{data.name}</h2>
+              <h2 style={{ fontWeight: 300, fontSize: 3 + 'rem' }}>{data.name}, {data.sys.country}</h2>
             </Container>
             <h1 style={{ textAlign: 'center', fontSize: 4 + 'rem' }}>{+data.main.temp.toFixed(0)} °C</h1>
             <input onChange={onChangeSlider} value={+data.main.temp.toFixed(0)} type={'range'} min={-50} max={100} style={{marginTop: 30 + 'px'}} className='w-50'/>
