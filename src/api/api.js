@@ -1,5 +1,4 @@
 import axios from 'axios';
-import config from './config';
 
 const API_KEY = '25d306c0f5046c868fe9bc8e2f1428b4'
 
@@ -11,10 +10,10 @@ const instance = axios.create({
 })
 
 export const weatherAPI = {
-    getDefaulLocation: (long = null, latt = null, country = null) => {
+    getDefaulLocation: (long = null, latt = null, city = null) => {
         let endpoint = null;
-        if (country) {
-            endpoint = `?q=${country}&units=metric&appid=${API_KEY}`
+        if (city) {
+            endpoint = `?q=${city}&units=metric&appid=${API_KEY}`
         } else {
             endpoint = `?lat=${latt}&lon=${long}&units=metric&appid=${API_KEY}`
         }

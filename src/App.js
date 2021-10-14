@@ -8,34 +8,25 @@ import { weatherAPI } from './api/api';
 import { useHistory, useLocation, withRouter } from 'react-router-dom';
 import Loader from './components/Loader';
 import Mod from './components/Mod';
-import {color_changer, cookie} from './utils/util'
+import { color_changer } from './utils/util'
 
 const App = withRouter((props) => {
-  const cookies = cookie();
   const [data, setData] = useState({})
   const [loading, setLoading] = useState(false)
   const [modal, setModal] = useState(false);
-  const [position, setPosition] = useState(false)
 
   const history = useHistory();
   const location = useLocation()
 
   useEffect(() => {
     setLoading(true);
-    
-    console.log(cookies, 's')
-    
-      navigator.geolocation.getCurrentPosition((position) => {
-        document.cookie = 'allow=true'
-        history.push(`?longlatt=${position.coords.longitude},${position.coords.latitude}`)
-        setPosition()
-        setModal(true)
-      }, (err) => {
-        history.push('?city=London')
-        document.cookie = 'allow=false'
-      })
-    
-    
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      history.push(`?longlatt=${position.coords.longitude},${position.coords.latitude}`)
+      setModal(true)
+    }, (err) => {
+      history.push('?city=London')
+    })
   }, [])
 
   const apiCall = async (place) => {
@@ -47,37 +38,44 @@ const App = withRouter((props) => {
   useEffect(() => {
     let array = location.search.substr(1).split('=');
     let obj = { [`${array[0]}`]: array[1] }
-    
-    apiCall(obj)
 
-    console.log(obj)
+    apiCall(obj)
   }, [location.search])
 
   useEffect(() => {
-    if(data?.weather) setLoading(false)
-    console.log(data)
+    if (data?.weather) setLoading(false)
   }, [data])
 
+  const onChangeSlider = (e) => {
+    setData({
+      ...data,
+      main: {
+        ...data.main,
+        temp: +e.target.value
+      }
+    })
+  }
 
 
 
   return (
     <Container className='d-flex vh-100 flex-column' fluid style={{ paddingLeft: 0, paddingRight: 0 }}>
       <Row style={{ margin: 0, height: 15 + 'vh' }}>
-        <Header city={data.name}/>
+        <Header city={data.name} />
       </Row>
       {!loading && data?.weather ? <>
-        <Row className='d-flex align-items-center justify-content-center transition' style={{ margin: 0, height: 85 + 'vh', backgroundColor: color_changer(+data.main.temp.toFixed(0)), color: 'white'  }}>
-          <Col style={{ padding: 0 }}>
-            <Container className='d-flex align-items-center justify-content-center' style={{ padding: 0}} fluid>
+        <Row className='d-flex align-items-center justify-content-center transition' style={{ margin: 0, height: 85 + 'vh', backgroundColor: color_changer(+data.main.temp.toFixed(0)), color: 'white' }}>
+          <Col className='d-flex flex-column align-items-center' style={{ padding: 0 }}>
+            <Container className='d-flex align-items-center justify-content-center' style={{ padding: 0 }} fluid>
               <Image width='300px' src={`http://openweathermap.org/img/wn/${data?.weather[0]?.icon}@4x.png`} rounded />
-              <h2 style={{fontWeight: 300, fontSize: 3 + 'rem'}}>{data.name}</h2>  
+              <h2 style={{ fontWeight: 300, fontSize: 3 + 'rem' }}>{data.name}</h2>
             </Container>
-            <h1 style={{textAlign: 'center', fontSize: 4 + 'rem'}}>{+data.main.temp.toFixed(0)} °C</h1>
+            <h1 style={{ textAlign: 'center', fontSize: 4 + 'rem' }}>{+data.main.temp.toFixed(0)} °C</h1>
+            <input onChange={onChangeSlider} value={+data.main.temp.toFixed(0)} type={'range'} min={-50} max={100} style={{marginTop: 30 + 'px'}} className='w-50'/>
           </Col>
         </Row>
-      </> :  <Row className='d-flex align-items-center justify-content-center' style={{ margin: 0, height: 85 + 'vh', backgroundColor: color_changer(+data?.main?.temp?.toFixed(0)) }}><Loader/></Row>}
-      <Mod modal={modal} data={data} setModal={setModal}/>
+      </> : <Row className='d-flex align-items-center justify-content-center' style={{ margin: 0, height: 85 + 'vh', backgroundColor: color_changer(+data?.main?.temp?.toFixed(0)) }}><Loader /></Row>}
+      <Mod modal={modal} data={data} setModal={setModal} />
     </Container>
   );
 })
