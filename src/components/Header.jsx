@@ -12,7 +12,7 @@ export default ({city}) => {
 
     return <Navbar bg='dark'>
         <Container className='d-flex'>
-            <Navbar.Brand className="d-flex p-2 align-items-center" href="/" style={{ color: 'white' }}>
+            <Navbar.Brand className="d-flex p-2 align-items-center" href="/weather/" style={{ color: 'white' }}>
                 <img
                     src={logo}
                     width="70"
